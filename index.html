@@ -24,11 +24,38 @@
     width: 72vmin; height: 72vmin;
     image-rendering: auto;
     background: #000;
-    filter: blur(1.9px) contrast(1.08) saturate(0.92);
+    filter: blur(0.7px) contrast(1.08) saturate(0.92);
     transform: scale(1.03);
   }
 
-  /* ═══════════════ SONAR (middle right only) ═══════════════ */
+  /* ═══════════════ ATMOSPHERE OVERLAYS ═══════════════ */
+  #atmos {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background:
+      radial-gradient(ellipse at 50% 45%,
+        rgba(60,40,15,0.10) 0%,
+        rgba(0,0,0,0.0) 30%,
+        rgba(0,0,0,0.55) 85%,
+        rgba(0,0,0,0.92) 100%);
+  }
+  #scanlines {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 7;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.14) 2px,
+      rgba(0,0,0,0.14) 3px
+    );
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+  }
+
+  /* ═══════════════ SONAR ═══════════════ */
   .sonar {
     position: fixed;
     width: 160px; height: 160px;
@@ -38,20 +65,72 @@
     z-index: 10;
     pointer-events: none;
   }
-  #sonarS {
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+  #sonarS { right: 12px; top: 50%; transform: translateY(-50%); }
+
+  /* ═══════════════ CHEAT MAP ═══════════════ */
+  #map {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 94vmin; height: 94vmin;
+    max-width: 900px; max-height: 900px;
+    background: rgba(0,0,0,0.96);
+    border: 2px solid rgba(110,255,160,0.5);
+    box-shadow: 0 0 40px rgba(110,255,160,0.25), inset 0 0 30px rgba(0,0,0,0.9);
+    z-index: 50;
+    display: none;
+    pointer-events: none;
+    image-rendering: pixelated;
+  }
+  #map.on { display: block; }
+  #mapLabel {
+    position: fixed;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    color: #6effa0;
+    font: 12px monospace;
+    letter-spacing: 6px;
+    z-index: 51;
+    display: none;
+    pointer-events: none;
+    text-shadow: 0 0 10px rgba(110,255,160,0.8);
+  }
+  #mapLabel.on { display: block; }
+
+  /* ═══════════════ RED VIGNETTE ═══════════════ */
+  #vignette {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    background: radial-gradient(ellipse at center,
+      rgba(0,0,0,0) 30%,
+      rgba(120,0,0,0.0) 45%,
+      rgba(80,0,0,0.85) 100%);
+    opacity: 0;
+    transition: opacity 0.2s linear;
   }
 
-  /* ═══════════════ D-PAD BUTTON LAYOUT  —  PLAIN ═══════════════ */
+  /* ═══════════════ CLOCK (bottom-left) ═══════════════ */
+  #clock {
+    position: fixed;
+    bottom: 14px; left: 14px;
+    z-index: 12;
+    color: #7de8a0;
+    font: 14px monospace;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(110,255,160,0.55);
+    background: rgba(0,0,0,0.45);
+    padding: 5px 11px;
+    border: 1px solid rgba(110,255,160,0.25);
+    pointer-events: none;
+  }
+
+  /* ═══════════════ D-PAD ═══════════════ */
   #ui {
     position: fixed;
-    left: 22px;
-    top: 50%;
+    left: 22px; top: 50%;
     transform: translateY(-50%);
-    width: 216px;
-    height: 216px;
+    width: 216px; height: 216px;
     z-index: 10;
   }
   #ui button {
@@ -66,117 +145,166 @@
     cursor: pointer;
     touch-action: none;
   }
-  #ui button:active {
-    background: #b8b8b8;
-    color: #000;
-  }
-
+  #ui button:active { background: #b8b8b8; color: #000; }
   #bF    { left: 75px;  top: 0; }
   #bL    { left: 0;     top: 75px; }
   #bLight{ left: 75px;  top: 75px; }
   #bR    { left: 150px; top: 75px; }
   #bB    { left: 75px;  top: 150px; }
 
-  /* ═══════════════ BOOT SCREEN  —  MINIMAL ═══════════════ */
+  /* ═══════════════ BOOT ═══════════════ */
   #boot {
     position: fixed; inset: 0;
-    background: #000;
-    color: #fff;
+    background: #000; color: #fff;
     z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: monospace;
-    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: monospace; font-size: 13px;
     transition: opacity 0.5s;
   }
   #boot.hidden { opacity: 0; pointer-events: none; }
-  .bootInner {
-    width: min(560px, 88vw);
-    padding: 20px;
-  }
-  .bootHeader {
-    color: #fff;
-    margin-bottom: 14px;
-  }
+  .bootInner { width: min(560px, 88vw); padding: 20px; }
+  .bootHeader { color: #fff; margin-bottom: 14px; }
   .bootLog {
-    height: 240px;
-    overflow: hidden;
-    line-height: 1.5;
-    color: #fff;
-    white-space: pre;
-    margin-bottom: 14px;
+    height: 260px; overflow: hidden; line-height: 1.5;
+    color: #fff; white-space: pre; margin-bottom: 14px;
   }
-  .bootBarWrap {
-    height: 10px;
-    border: 1px solid #fff;
-    margin-bottom: 6px;
-  }
-  .bootBarFill {
-    height: 100%; width: 0%;
-    background: #fff;
-    transition: width 0.08s linear;
-  }
-  .bootPct {
-    text-align: right;
-    color: #fff;
-    margin-bottom: 16px;
-  }
+  .bootBarWrap { height: 10px; border: 1px solid #fff; margin-bottom: 6px; }
+  .bootBarFill { height: 100%; width: 0%; background: #fff; transition: width 0.08s linear; }
+  .bootPct { text-align: right; color: #fff; margin-bottom: 16px; }
   .bootEnter {
-    display: block;
-    margin: 0 auto;
+    display: block; margin: 0 auto;
     padding: 8px 28px;
-    font: 13px monospace;
-    letter-spacing: 3px;
-    color: #000;
-    background: #fff;
-    border: 1px solid #fff;
-    cursor: pointer;
-    opacity: 0;
-    pointer-events: none;
+    font: 13px monospace; letter-spacing: 3px;
+    color: #000; background: #fff; border: 1px solid #fff;
+    cursor: pointer; opacity: 0; pointer-events: none;
     transition: opacity 0.4s;
   }
   .bootEnter.enabled { opacity: 1; pointer-events: auto; }
 
-  /* ═══════════════ WIN ═══════════════ */
+  /* ═══════════════ END SCREEN ═══════════════ */
+  #end {
+    position: fixed; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    background: #000;
+    z-index: 500;
+    pointer-events: none;
+  }
+  #end.on { display: flex; pointer-events: auto; }
+  #end .box {
+    text-align: center;
+    font: 14px monospace;
+    color: #fff;
+    animation: fadeIn 2.4s ease-out forwards;
+  }
+  #end h1 {
+    font-size: 46px;
+    letter-spacing: 18px;
+    margin: 0 0 8px 0;
+    color: #fff;
+    font-weight: normal;
+    text-shadow: 0 0 30px rgba(255,255,255,0.35);
+  }
+  #end h2 {
+    font-size: 20px;
+    letter-spacing: 10px;
+    margin: 28px 0 0 0;
+    color: #a8d8b8;
+    font-weight: normal;
+    text-shadow: 0 0 18px rgba(110,255,160,0.55);
+    animation: fadeIn 2.4s ease-out 1.6s both;
+  }
+  #end p {
+    margin: 36px 0 0 0;
+    letter-spacing: 4px;
+    color: #666;
+    font-size: 11px;
+    animation: fadeIn 2.4s ease-out 2.6s both;
+  }
+  #end button {
+    margin-top: 32px;
+    padding: 10px 32px;
+    font: 12px monospace;
+    letter-spacing: 4px;
+    color: #000;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    animation: fadeIn 2.4s ease-out 3.2s both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ═══════════════ WIN SCREEN ═══════════════ */
   #win {
     position: fixed; inset: 0;
     display: none;
     align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.94);
+    background: #000;
     z-index: 200;
   }
   #win.on { display: flex; }
   #win .box {
     text-align: center;
-    font: 13px monospace;
+    font: 14px monospace;
     color: #fff;
+    animation: fadeIn 2.4s ease-out forwards;
   }
   #win h1 {
-    font-size: 26px;
-    letter-spacing: 10px;
-    margin: 0 0 12px;
+    font-size: 46px;
+    letter-spacing: 18px;
+    margin: 0 0 8px 0;
     color: #fff;
+    font-weight: normal;
+    text-shadow: 0 0 30px rgba(110,255,160,0.45);
   }
-  #win p { margin: 0 0 22px; letter-spacing: 2px; color: #fff; }
+  #win h2 {
+    font-size: 20px;
+    letter-spacing: 10px;
+    margin: 28px 0 0 0;
+    color: #7de8a0;
+    font-weight: normal;
+    text-shadow: 0 0 18px rgba(110,255,160,0.65);
+    animation: fadeIn 2.4s ease-out 1.6s both;
+  }
+  #win p {
+    margin: 36px 0 0 0;
+    letter-spacing: 4px;
+    color: #666;
+    font-size: 11px;
+    animation: fadeIn 2.4s ease-out 2.6s both;
+  }
   #win button {
-    padding: 10px 26px;
+    margin-top: 32px;
+    padding: 10px 32px;
     font: 12px monospace;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     color: #000;
     background: #fff;
     border: none;
     cursor: pointer;
+    animation: fadeIn 2.4s ease-out 3.2s both;
   }
 </style>
 </head>
 <body>
 
 <div id="stage">
-  <canvas id="view" width="72" height="72"></canvas>
+  <canvas id="view" width="360" height="360"></canvas>
 </div>
 
+<div id="atmos"></div>
+<div id="vignette"></div>
+<div id="scanlines"></div>
+
 <canvas id="sonarS" class="sonar" width="80" height="80"></canvas>
+
+<canvas id="map" width="480" height="480"></canvas>
+<div id="mapLabel">[ CHEAT // MAP ]</div>
+
+<div id="clock">00:00:00.000</div>
 
 <div id="ui">
   <button id="bF">FWD</button>
@@ -188,7 +316,7 @@
 
 <div id="boot">
   <div class="bootInner">
-    <div class="bootHeader">ROVER OS v0.4.2  //  LEVEL 0 SURVEY UNIT</div>
+    <div class="bootHeader">ROVER OS v0.8.0  //  LEVEL 0 SURVEY UNIT</div>
     <div class="bootLog" id="bootLog"></div>
     <div class="bootBarWrap"><div class="bootBarFill" id="bootFill"></div></div>
     <div class="bootPct" id="bootPct">0%</div>
@@ -196,9 +324,20 @@
   </div>
 </div>
 
+<!-- CAUGHT END SCREEN -->
+<div id="end">
+  <div class="box">
+    <h1>THE END</h1>
+    <p>THE ROVER WAS TAKEN</p>
+    <button id="endAgain">TRY AGAIN</button>
+  </div>
+</div>
+
+<!-- WIN SCREEN -->
 <div id="win">
   <div class="box">
-    <h1>NOCLIP</h1>
+    <h1>THE END</h1>
+    <h2>OR IS IT?</h2>
     <p>ROVER BREACHED THE WALL</p>
     <button id="again">RE-ENTER</button>
   </div>
@@ -227,10 +366,13 @@ const TURN_SPEED = 2.4;
 const MOVE_SPEED = 2.2;
 const BACK_SPEED = 1.4;
 const NOCLIP_TIME = 0.9;
-const RES = 72;
+const RES = 360;
 
-const MONSTER_COUNT = 10;
-const MONSTER_SPEED = 0.7;
+const MONSTER_COUNT = 12;
+const MONSTER_SPEED = 1.25;
+const MONSTER_LUNGE_SPEED = 3.15;
+const CHASE_RANGE = 24;
+const ALERT_RANGE = 34;
 
 /* Sonar */
 const SONAR_RANGE = 16;
@@ -238,11 +380,36 @@ const SONAR_RAYS = 48;
 const SONAR_ARC = Math.PI * 0.9;
 const SONAR_WAVE_SPEED = 9.0;
 
-/* Threat-proximity glitch (the ONLY distortion source) */
-const MONSTER_GLITCH_RANGE = 8.0;
+/* Threat proximity */
+const MONSTER_GLITCH_RANGE = 12.0;
 const WALL_GLITCH_RANGE = 10.0;
 
-const WORLD_SEED = (Math.random() * 0xFFFFFFF) >>> 0;
+/* Safe zones — now common */
+const SAFE_ZONE_COUNT = 30;
+const SAFE_RADIUS = 4.6;
+const SAFE_LIGHT_HEIGHT = 2.4;
+
+/* Exits — now common */
+const EXIT_COUNT = 40;
+
+/* Caught */
+const CAUGHT_DIST = 1.55;
+const CAUGHT_COOLDOWN = 3.0;
+const GRACE_AFTER_CAUGHT = 3.0;
+const GRACE_AFTER_LOAD = 2.0;
+
+/* Save */
+const SAVE_KEY = 'rover_level0_save_v8';
+const SAVE_INTERVAL_MS = 1000;
+
+/* ══════════════════════════════════════════════════════════
+   LOAD SAVE
+   ══════════════════════════════════════════════════════════ */
+let savedGame = null;
+try { savedGame = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch(e){ savedGame = null; }
+if (savedGame && typeof savedGame.seed !== 'number') savedGame = null;
+
+const WORLD_SEED = (savedGame?.seed ?? (Math.random() * 0xFFFFFFF)) >>> 0;
 
 /* ══════════════════════════════════════════════════════════
    HASH
@@ -256,28 +423,15 @@ function hash2(x, y){
 function n2(x, y){ return hash2(x * 8123 + 17, y * 9187 + 43); }
 
 /* ══════════════════════════════════════════════════════════
-   PROCEDURAL WORLD
+   TERRAIN
    ══════════════════════════════════════════════════════════ */
-const EXIT_RX = 6 + Math.floor(hash2(0xA11, 0xB22) * 15);
-const EXIT_RZ = 6 + Math.floor(hash2(0xC33, 0xD44) * 15);
-const EXIT_ROOM_GX = EXIT_RX * 2 + 1;
-const EXIT_ROOM_GZ = EXIT_RZ * 2 + 1;
-const EXIT_WALL_GX = EXIT_ROOM_GX + 1;
-const EXIT_WALL_GZ = EXIT_ROOM_GZ;
-
 function vWallOpen(i, j){
-  const gx = 2 * i, gz = 2 * j + 1;
-  if (gx === EXIT_WALL_GX && gz === EXIT_WALL_GZ) return false;
-  if (gx === EXIT_ROOM_GX - 1 && gz === EXIT_ROOM_GZ) return true;
   return hash2(i * 31 + 11, j * 17 + 5) < 0.80;
 }
 function hWallOpen(i, j){
-  const gx = 2 * i + 1, gz = 2 * j;
-  if (gx === EXIT_ROOM_GX && gz === EXIT_ROOM_GZ - 1) return false;
-  if (gx === EXIT_ROOM_GX && gz === EXIT_ROOM_GZ + 1) return false;
   return hash2(i * 53 + 7, j * 41 + 19) < 0.44;
 }
-function isWall(gx, gz){
+function terrainIsWall(gx, gz){
   const mx = ((gx % 2) + 2) % 2;
   const mz = ((gz % 2) + 2) % 2;
   if (mx === 1 && mz === 1) return false;
@@ -285,6 +439,112 @@ function isWall(gx, gz){
   if (mx === 0) return !vWallOpen(gx / 2, (gz - 1) / 2);
   return !hWallOpen((gx - 1) / 2, gz / 2);
 }
+
+/* ══════════════════════════════════════════════════════════
+   SAFE ZONE PALETTES
+   ══════════════════════════════════════════════════════════ */
+const SAFE_PALETTE = [
+  { name: 'mint',   hex: 0x6effa0, css: '#6effa0', light: 0x9dffc0 },
+  { name: 'red',    hex: 0xff3838, css: '#ff3838', light: 0xff7060 },
+  { name: 'blue',   hex: 0x3a8aff, css: '#3a8aff', light: 0x6aaaff },
+  { name: 'green',  hex: 0x40ff60, css: '#40ff60', light: 0x80ffa0 },
+  { name: 'purple', hex: 0xb050ff, css: '#b050ff', light: 0xd080ff }
+];
+SAFE_PALETTE.forEach(p => {
+  p.rgb = `${(p.hex >> 16) & 255}, ${(p.hex >> 8) & 255}, ${p.hex & 255}`;
+});
+
+function pickSafePalette(idx){
+  const roll = hash2(idx * 977 + 3, 0x5AFE);
+  if (roll < 0.5) return SAFE_PALETTE[0];
+  const pick = hash2(idx * 977 + 4, 0xC0DE);
+  return SAFE_PALETTE[1 + Math.floor(pick * 4)];
+}
+
+/* ══════════════════════════════════════════════════════════
+   GENERATE SAFE ZONES (common)
+   ══════════════════════════════════════════════════════════ */
+const safeZones = [];
+(function pickSafeZones(){
+  let tries = 0;
+  while (safeZones.length < SAFE_ZONE_COUNT && tries++ < 6000){
+    const gx = 4 + Math.floor(hash2(tries * 11 + 5, 0x51) * 120);
+    const gz = 4 + Math.floor(hash2(tries * 13 + 9, 0x52) * 120);
+    if (terrainIsWall(gx, gz)) continue;
+
+    /* Require a somewhat open pocket */
+    let wallCount = 0;
+    for (let dx = -2; dx <= 2; dx++){
+      for (let dz = -2; dz <= 2; dz++){
+        if (terrainIsWall(gx + dx, gz + dz)) wallCount++;
+      }
+    }
+    if (wallCount > 9) continue;
+
+    /* Not too close to another safe zone (tighter since they're common) */
+    let tooClose = false;
+    for (const z of safeZones){
+      if (Math.hypot(z.gx - gx, z.gz - gz) < 6) { tooClose = true; break; }
+    }
+    if (tooClose) continue;
+
+    safeZones.push({
+      gx, gz,
+      x: gx * CS + CS/2,
+      z: gz * CS + CS/2,
+      index: safeZones.length
+    });
+  }
+})();
+
+/* ══════════════════════════════════════════════════════════
+   GENERATE EXIT POINTS (common, scattered)
+   ══════════════════════════════════════════════════════════ */
+const exitWalls = [];
+const exitWallSet = new Set();
+
+(function pickExits(){
+  let tries = 0;
+  while (exitWalls.length < EXIT_COUNT && tries++ < 12000){
+    const gx = 4 + Math.floor(hash2(tries * 17 + 3, 0xA11) * 120);
+    const gz = 4 + Math.floor(hash2(tries * 23 + 7, 0xB22) * 120);
+
+    const mx = ((gx % 2) + 2) % 2;
+    const mz = ((gz % 2) + 2) % 2;
+    if (mx === 1 && mz === 1) continue;
+
+    if (Math.abs(gx - 1) < 5 && Math.abs(gz - 1) < 5) continue;
+
+    const key = gx + ',' + gz;
+    if (exitWallSet.has(key)) continue;
+
+    /* Not too close to another exit (tighter since they're common) */
+    let tooClose = false;
+    for (const e of exitWalls){
+      if (Math.hypot(e.gx - gx, e.gz - gz) < 4){ tooClose = true; break; }
+    }
+    if (tooClose) continue;
+
+    /* Not inside a safe zone center */
+    let inSafe = false;
+    for (const z of safeZones){
+      if (Math.hypot(z.gx - gx, z.gz - gz) < 3){ inSafe = true; break; }
+    }
+    if (inSafe) continue;
+
+    exitWalls.push({ gx, gz });
+    exitWallSet.add(key);
+  }
+})();
+
+/* ══════════════════════════════════════════════════════════
+   WALL QUERY
+   ══════════════════════════════════════════════════════════ */
+function isWall(gx, gz){
+  if (exitWallSet.has(gx + ',' + gz)) return true;
+  return terrainIsWall(gx, gz);
+}
+function isExitWall(gx, gz){ return exitWallSet.has(gx + ',' + gz); }
 
 const chunkData = new Map();
 function getChunkData(cx, cz){
@@ -309,9 +569,6 @@ function worldSolid(gx, gz){
   const lx = gx - cx * CHUNK;
   const lz = gz - cz * CHUNK;
   return getChunkData(cx, cz).solid[lz * CHUNK + lx] === 1;
-}
-function isExitWall(gx, gz){
-  return gx === EXIT_WALL_GX && gz === EXIT_WALL_GZ;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -339,34 +596,41 @@ function makeTex(S, fill){
   return t;
 }
 
-const wallTex = makeTex(64, (u, v) => {
-  if (v < 0.06) return [78, 58, 34];
-  if (v > 0.94) return [208, 188, 138];
-  const n = (n2(Math.floor(u * 64), Math.floor(v * 64)) - 0.5) * 14;
-  const seam = (u * 4) % 1 < 0.02 ? -22 : 0;
-  return [196 + n + seam, 176 + n + seam, 116 + n * 0.7 + seam];
+const wallTex = makeTex(128, (u, v) => {
+  if (v < 0.06) return [58, 42, 24];
+  if (v > 0.94) return [148, 130, 88];
+  const n = (n2(Math.floor(u * 128), Math.floor(v * 128)) - 0.5) * 16;
+  const fine = (n2(Math.floor(u * 256), Math.floor(v * 256)) - 0.5) * 6;
+  const seam = (u * 4) % 1 < 0.018 ? -26 : 0;
+  const stain = Math.max(0, n2(Math.floor(u * 8), Math.floor(v * 8)) - 0.75) * -40;
+  return [128 + n + fine + seam + stain,
+          112 + n + fine + seam + stain,
+          72 + n * 0.7 + fine * 0.7 + seam + stain];
 });
 const exitWallTex = wallTex.clone();
 exitWallTex.offset.set(0.085, 0.0);
 exitWallTex.needsUpdate = true;
 
-const floorTex = makeTex(64, (u, v) => {
-  const n = (n2(Math.floor(u * 128), Math.floor(v * 128)) - 0.5) * 24;
-  return [110 + n, 92 + n, 58 + n];
+const floorTex = makeTex(128, (u, v) => {
+  const n = (n2(Math.floor(u * 256), Math.floor(v * 256)) - 0.5) * 26;
+  const fine = (n2(Math.floor(u * 512), Math.floor(v * 512)) - 0.5) * 8;
+  const crack = Math.abs(n2(Math.floor(u * 12), Math.floor(v * 12)) - 0.5) < 0.02 ? -30 : 0;
+  return [72 + n + fine + crack, 60 + n + fine + crack, 38 + n + fine + crack];
 });
-const ceilTex = makeTex(64, (u, v) => {
-  const gx = (u * 64) % 16, gy = (v * 64) % 16;
-  if (gx < 1 || gy < 1) return [96, 92, 82];
-  const n = (n2(Math.floor(u * 64), Math.floor(v * 64)) - 0.5) * 10;
-  return [206 + n, 200 + n, 178 + n];
+const ceilTex = makeTex(128, (u, v) => {
+  const gx = (u * 128) % 32, gy = (v * 128) % 32;
+  if (gx < 2 || gy < 2) return [58, 56, 50];
+  const n = (n2(Math.floor(u * 128), Math.floor(v * 128)) - 0.5) * 12;
+  const fine = (n2(Math.floor(u * 256), Math.floor(v * 256)) - 0.5) * 5;
+  return [130 + n + fine, 126 + n + fine, 112 + n + fine];
 });
 
 /* ══════════════════════════════════════════════════════════
-   SCENE / RENDERER
+   SCENE
    ══════════════════════════════════════════════════════════ */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x050403);
-scene.fog = new THREE.FogExp2(0x050403, 0.075);
+scene.background = new THREE.Color(0x030202);
+scene.fog = new THREE.FogExp2(0x030202, 0.092);
 
 const cam = new THREE.PerspectiveCamera(84, 1, 0.05, 50);
 cam.rotation.order = 'YXZ';
@@ -374,12 +638,10 @@ cam.rotation.order = 'YXZ';
 const viewEl = document.getElementById('view');
 
 const renderer = new THREE.WebGLRenderer({
-  canvas: viewEl,
-  antialias: false,
-  powerPreference: 'high-performance',
-  stencil: false
+  canvas: viewEl, antialias: true,
+  powerPreference: 'high-performance', stencil: false
 });
-renderer.setPixelRatio(1);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(RES, RES, false);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
@@ -401,7 +663,7 @@ const floorGeo = new THREE.PlaneGeometry(CHUNK * CS, CHUNK * CS); floorGeo.rotat
 const ceilGeo  = new THREE.PlaneGeometry(CHUNK * CS, CHUNK * CS); ceilGeo.rotateX( Math.PI / 2);
 
 /* ══════════════════════════════════════════════════════════
-   CHUNK MESHES
+   CHUNKS
    ══════════════════════════════════════════════════════════ */
 const chunkMeshes = new Map();
 
@@ -435,11 +697,12 @@ function buildChunk(cx, cz){
     group.add(mesh);
   }
 
-  const exCx = Math.floor(EXIT_WALL_GX / CHUNK);
-  const exCz = Math.floor(EXIT_WALL_GZ / CHUNK);
-  if (cx === exCx && cz === exCz){
-    const lx = EXIT_WALL_GX - cx * CHUNK;
-    const lz = EXIT_WALL_GZ - cz * CHUNK;
+  for (const e of exitWalls){
+    const ecx = Math.floor(e.gx / CHUNK);
+    const ecz = Math.floor(e.gz / CHUNK);
+    if (ecx !== cx || ecz !== cz) continue;
+    const lx = e.gx - cx * CHUNK;
+    const lz = e.gz - cz * CHUNK;
     const em = new THREE.Mesh(wallGeo, exitWallMat);
     em.position.set(ox + lx * CS + CS/2, WH/2, oz + lz * CS + CS/2);
     group.add(em);
@@ -465,6 +728,127 @@ function disposeChunk(cx, cz){
 }
 
 /* ══════════════════════════════════════════════════════════
+   SAFE ZONE VISUALS — just a light
+   ══════════════════════════════════════════════════════════ */
+safeZones.forEach(zone => {
+  const palette = pickSafePalette(zone.index);
+  zone.palette = palette;
+  const c = palette.light;
+
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(0.28, 16, 16),
+    new THREE.MeshBasicMaterial({ color: c })
+  );
+  core.position.set(zone.x, SAFE_LIGHT_HEIGHT, zone.z);
+  scene.add(core);
+  zone.core = core;
+
+  const halo = new THREE.Mesh(
+    new THREE.SphereGeometry(1.75, 20, 20),
+    new THREE.MeshBasicMaterial({
+      color: c,
+      transparent: true,
+      opacity: 0.14,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    })
+  );
+  halo.position.set(zone.x, SAFE_LIGHT_HEIGHT, zone.z);
+  scene.add(halo);
+  zone.halo = halo;
+
+  const light = new THREE.PointLight(c, 9.0, 14, 2);
+  light.position.set(zone.x, SAFE_LIGHT_HEIGHT, zone.z);
+  scene.add(light);
+  zone.light = light;
+});
+
+function inSafeZone(x, z){
+  for (const zone of safeZones){
+    const dx = x - zone.x, dz = z - zone.z;
+    if (dx*dx + dz*dz < SAFE_RADIUS * SAFE_RADIUS) return zone;
+  }
+  return null;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DUST PARTICLES
+   ══════════════════════════════════════════════════════════ */
+const DUST_COUNT = 260;
+const DUST_BOX = { x: 20, y: 3.2, z: 20 };
+
+function makeDustSprite(){
+  const s = 32;
+  const c = document.createElement('canvas');
+  c.width = c.height = s;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+  g.addColorStop(0,    'rgba(255,238,200,1)');
+  g.addColorStop(0.35, 'rgba(255,230,180,0.45)');
+  g.addColorStop(1,    'rgba(255,220,160,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, s, s);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+const dustGeo = new THREE.BufferGeometry();
+const dustPos = new Float32Array(DUST_COUNT * 3);
+const dustVel = new Float32Array(DUST_COUNT * 3);
+const dustPhase = new Float32Array(DUST_COUNT);
+
+for (let i = 0; i < DUST_COUNT; i++){
+  const i3 = i * 3;
+  dustPos[i3+0] = (Math.random() - 0.5) * DUST_BOX.x;
+  dustPos[i3+1] = Math.random() * DUST_BOX.y + 0.15;
+  dustPos[i3+2] = (Math.random() - 0.5) * DUST_BOX.z;
+  dustVel[i3+0] = (Math.random() - 0.5) * 0.09;
+  dustVel[i3+1] = -0.02 - Math.random() * 0.05;
+  dustVel[i3+2] = (Math.random() - 0.5) * 0.09;
+  dustPhase[i] = Math.random() * Math.PI * 2;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+
+const dustMat = new THREE.PointsMaterial({
+  size: 0.075,
+  map: makeDustSprite(),
+  transparent: true,
+  opacity: 0.32,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  color: 0xffe0a0,
+  sizeAttenuation: true
+});
+const dustPoints = new THREE.Points(dustGeo, dustMat);
+dustPoints.frustumCulled = false;
+scene.add(dustPoints);
+
+function updateDust(dt){
+  const pos = dustGeo.attributes.position.array;
+  const time = performance.now() * 0.001;
+  const rx = rover.x, rz = rover.z;
+  const halfX = DUST_BOX.x / 2, halfZ = DUST_BOX.z / 2;
+
+  for (let i = 0; i < DUST_COUNT; i++){
+    const i3 = i * 3;
+    const ph = dustPhase[i];
+
+    pos[i3+0] += dustVel[i3+0] * dt + Math.sin(time + ph) * 0.0035;
+    pos[i3+1] += dustVel[i3+1] * dt;
+    pos[i3+2] += dustVel[i3+2] * dt + Math.cos(time * 0.8 + ph) * 0.0035;
+
+    if (pos[i3+1] < 0.1) pos[i3+1] = DUST_BOX.y;
+
+    if (pos[i3+0] - rx < -halfX) pos[i3+0] = rx + halfX;
+    else if (pos[i3+0] - rx > halfX) pos[i3+0] = rx - halfX;
+    if (pos[i3+2] - rz < -halfZ) pos[i3+2] = rz + halfZ;
+    else if (pos[i3+2] - rz > halfZ) pos[i3+2] = rz - halfZ;
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+}
+
+/* ══════════════════════════════════════════════════════════
    ROVER + LIGHTS
    ══════════════════════════════════════════════════════════ */
 const rover = { x: 1.5 * CS, z: 1.5 * CS, yaw: 0 };
@@ -481,7 +865,9 @@ const backTarget = new THREE.Object3D();
 scene.add(backTarget);
 backLight.target = backTarget;
 
-scene.add(new THREE.AmbientLight(0x2a2418, 0.6));
+scene.add(new THREE.AmbientLight(0x241d12, 0.42));
+
+let flickTarget = 6.0;
 
 /* ══════════════════════════════════════════════════════════
    COLLISION
@@ -509,32 +895,49 @@ function collide(x, z){
 const monsters = [];
 function makeMonsterMesh(){
   const g = new THREE.Group();
-  const mat = new THREE.MeshLambertMaterial({ color: 0x1a2a10 });
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.2, 0.5), mat);
-  body.position.y = 0.6; g.add(body);
-  const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), mat);
-  head.position.y = 1.4; g.add(head);
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a });
-  const eL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.06), eyeMat);
-  eL.position.set(-0.1, 1.42, 0.21); g.add(eL);
-  const eR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.06), eyeMat);
-  eR.position.set( 0.1, 1.42, 0.21); g.add(eR);
+  const mat = new THREE.MeshLambertMaterial({ color: 0x080808 });
+
+  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.5, 0.4), mat);
+  torso.position.y = 0.95; g.add(torso);
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.45, 0.38), mat);
+  head.position.y = 1.92; g.add(head);
+
+  const armL = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.35, 0.16), mat);
+  armL.position.set(-0.4, 1.05, 0); g.add(armL);
+  const armR = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.35, 0.16), mat);
+  armR.position.set( 0.4, 1.05, 0); g.add(armR);
+
+  const legL = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.75, 0.17), mat);
+  legL.position.set(-0.14, 0.375, 0); g.add(legL);
+  const legR = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.75, 0.17), mat);
+  legR.position.set( 0.14, 0.375, 0); g.add(legR);
+
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff1010 });
+  const eL = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.07, 0.05), eyeMat);
+  eL.position.set(-0.09, 1.95, 0.21); g.add(eL);
+  const eR = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.07, 0.05), eyeMat);
+  eR.position.set( 0.09, 1.95, 0.21); g.add(eR);
+
   scene.add(g);
   return g;
 }
+
 function spawnMonster(){
   let tries = 0;
-  while (tries++ < 200){
-    const gx = Math.floor(rover.x / CS) + ((Math.random() * 60) | 0) - 30;
-    const gz = Math.floor(rover.z / CS) + ((Math.random() * 60) | 0) - 30;
+  while (tries++ < 500){
+    const gx = Math.floor(rover.x / CS) + ((Math.random() * 80) | 0) - 40;
+    const gz = Math.floor(rover.z / CS) + ((Math.random() * 80) | 0) - 40;
     if (worldSolid(gx, gz)) continue;
-    if (gx === EXIT_ROOM_GX && gz === EXIT_ROOM_GZ) continue;
-    const dx = gx * CS - rover.x, dz = gz * CS - rover.z;
+    const wx = gx * CS + CS/2, wz = gz * CS + CS/2;
+    if (inSafeZone(wx, wz)) continue;
+    const dx = wx - rover.x, dz = wz - rover.z;
     if (dx * dx + dz * dz < 400) continue;
-    return { x: gx * CS + CS/2, z: gz * CS + CS/2 };
+    return { x: wx, z: wz };
   }
   return { x: rover.x + 60, z: rover.z + 60 };
 }
+
 for (let i = 0; i < MONSTER_COUNT; i++){
   const p = spawnMonster();
   monsters.push({
@@ -542,41 +945,67 @@ for (let i = 0; i < MONSTER_COUNT; i++){
     yaw: Math.random() * Math.PI * 2,
     wanderTimer: Math.random() * 3,
     mesh: makeMonsterMesh(),
-    phase: Math.random() * Math.PI * 2
+    phase: Math.random() * Math.PI * 2,
+    lunge: 0
   });
 }
+
 let globalFlash = 0;
+
 function updateMonsters(dt){
+  const safe = inSafeZone(rover.x, rover.z);
+  const playerMoving = input.forward || input.back || input.left || input.right;
+  const hearRange = playerMoving ? ALERT_RANGE : CHASE_RANGE;
+
   for (const M of monsters){
     M.wanderTimer -= dt;
     if (M.wanderTimer <= 0){
-      M.wanderTimer = 1.5 + Math.random() * 2.5;
-      M.yaw += (Math.random() - 0.5) * 2.4;
+      M.wanderTimer = 1.0 + Math.random() * 1.8;
+      M.yaw += (Math.random() - 0.5) * 2.6;
     }
+
     const dxP = rover.x - M.x, dzP = rover.z - M.z;
     const dP = Math.hypot(dxP, dzP);
-    if (dP < 8){
+
+    if (dP < hearRange && !safe){
       const want = Math.atan2(dxP, dzP);
       let diff = want - M.yaw;
       while (diff > Math.PI) diff -= Math.PI * 2;
       while (diff < -Math.PI) diff += Math.PI * 2;
-      M.yaw += diff * Math.min(1, dt * 1.5);
+      const turnSpeed = 2.5 + (1 - Math.min(1, dP / hearRange)) * 4.0;
+      M.yaw += diff * Math.min(1, dt * turnSpeed);
+    } else if (dP < 6 && safe){
+      const want = Math.atan2(dxP, dzP);
+      let diff = want - M.yaw;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      M.yaw += diff * Math.min(1, dt * 1.8);
     }
+
+    const wantLunge = (!safe && dP < 6.5) ? 1 : 0;
+    M.lunge += (wantLunge - M.lunge) * Math.min(1, dt * 4.5);
+
+    const speed = MONSTER_SPEED + M.lunge * (MONSTER_LUNGE_SPEED - MONSTER_SPEED);
     const fX = Math.sin(M.yaw);
     const fZ = Math.cos(M.yaw);
-    const nx = M.x + fX * MONSTER_SPEED * dt;
-    const nz = M.z + fZ * MONSTER_SPEED * dt;
-    if (!collide(nx, M.z)) M.x = nx; else M.yaw += 2.0 * dt;
-    if (!collide(M.x, nz)) M.z = nz; else M.yaw -= 2.0 * dt;
+    const nx = M.x + fX * speed * dt;
+    const nz = M.z + fZ * speed * dt;
+    if (!collide(nx, M.z)) M.x = nx; else M.yaw += 2.4 * dt;
+    if (!collide(M.x, nz)) M.z = nz; else M.yaw -= 2.4 * dt;
 
-    if (dP < 0.9){
-      globalFlash = 0.4;
-      M.yaw += Math.PI * 0.5;
-      M.wanderTimer = 0.6;
+    for (const zone of safeZones){
+      const dx = M.x - zone.x, dz = M.z - zone.z;
+      const d = Math.hypot(dx, dz);
+      const pushR = SAFE_RADIUS + 0.5;
+      if (d < pushR && d > 0.01){
+        const push = (pushR - d) * 5 * dt;
+        M.x += (dx / d) * push;
+        M.z += (dz / d) * push;
+      }
     }
 
     const t = performance.now() * 0.003 + M.phase;
-    M.mesh.position.set(M.x, Math.abs(Math.sin(t * 5)) * 0.06, M.z);
+    M.mesh.position.set(M.x, Math.abs(Math.sin(t * 6)) * 0.05, M.z);
     M.mesh.rotation.y = M.yaw;
   }
 }
@@ -608,23 +1037,17 @@ function streamChunks(){
 }
 
 /* ══════════════════════════════════════════════════════════
-   SONAR  —  single panel, middle right (scans BEHIND rover)
+   SONAR
    ══════════════════════════════════════════════════════════ */
 const sonarSCv  = document.getElementById('sonarS');
 const sonarSCtx = sonarSCv.getContext('2d');
 const SW = sonarSCv.width, SH = sonarSCv.height;
 
-/* Hit types */
-const HIT_WALL    = 1;  // white
-const HIT_EXIT    = 2;  // green  (noclip wall)
-const HIT_MONSTER = 3;  // red
+const HIT_WALL = 1, HIT_EXIT = 2, HIT_MONSTER = 3, HIT_SAFE = 4;
 
-/* Shared glitch state — driven ONLY by real proximity to a
-   monster or to the noclip wall. No random triggering. */
 let sonarGlitch = 0;
-let glitchAmt   = 0;
+let glitchAmt = 0;
 
-/* The single panel scans BEHIND the rover */
 const panel = { ctx: sonarSCtx, dir: Math.PI, waveR: 0, hits: [] };
 
 function castSonar(dirOffset){
@@ -633,6 +1056,7 @@ function castSonar(dirOffset){
   const N = SONAR_RAYS;
   const rayDist = new Float32Array(N + 1);
   const rayType = new Uint8Array(N + 1);
+  const rayColor = new Array(N + 1).fill(null);
 
   for (let i = 0; i <= N; i++){
     const a = startAng + (i / N) * SONAR_ARC;
@@ -643,8 +1067,10 @@ function castSonar(dirOffset){
     const step = 0.22;
     while (dist < SONAR_RANGE){
       dist += step;
-      const gx = Math.floor((rover.x + dx * dist) / CS);
-      const gz = Math.floor((rover.z + dz * dist) / CS);
+      const px = rover.x + dx * dist;
+      const pz = rover.z + dz * dist;
+      const gx = Math.floor(px / CS);
+      const gz = Math.floor(pz / CS);
       if (worldSolid(gx, gz)){
         rayDist[i] = dist;
         rayType[i] = isExitWall(gx, gz) ? HIT_EXIT : HIT_WALL;
@@ -653,10 +1079,22 @@ function castSonar(dirOffset){
     }
   }
 
-  /* Monsters — nearest one wins the ray if it's in front of the wall */
   for (const M of monsters){
-    const dx = M.x - rover.x;
-    const dz = M.z - rover.z;
+    const dx = M.x - rover.x, dz = M.z - rover.z;
+    const d = Math.hypot(dx, dz);
+    if (d >= SONAR_RANGE) continue;
+    const a = Math.atan2(-dx, -dz);
+    let rel = a - base;
+    while (rel >  Math.PI) rel -= Math.PI * 2;
+    while (rel < -Math.PI) rel += Math.PI * 2;
+    if (Math.abs(rel) > SONAR_ARC / 2) continue;
+    const idx = Math.round(((rel + SONAR_ARC / 2) / SONAR_ARC) * N);
+    if (idx < 0 || idx > N) continue;
+    if (d < rayDist[idx]){ rayDist[idx] = d; rayType[idx] = HIT_MONSTER; }
+  }
+
+  for (const zone of safeZones){
+    const dx = zone.x - rover.x, dz = zone.z - rover.z;
     const d = Math.hypot(dx, dz);
     if (d >= SONAR_RANGE) continue;
     const a = Math.atan2(-dx, -dz);
@@ -668,7 +1106,8 @@ function castSonar(dirOffset){
     if (idx < 0 || idx > N) continue;
     if (d < rayDist[idx]){
       rayDist[idx] = d;
-      rayType[idx] = HIT_MONSTER;
+      rayType[idx] = HIT_SAFE;
+      rayColor[idx] = zone.palette.rgb;
     }
   }
 
@@ -678,7 +1117,8 @@ function castSonar(dirOffset){
     hits.push({
       dist: rayDist[i],
       ang: startAng + (i / N) * SONAR_ARC,
-      type: rayType[i]
+      type: rayType[i],
+      color: rayColor[i]
     });
   }
   return hits;
@@ -712,7 +1152,6 @@ function drawPanel(P, dt){
   if (P.waveR > SONAR_RANGE) P.waveR = 0;
   P.hits = castSonar(P.dir);
 
-  /* faint rings */
   ctx.strokeStyle = 'rgba(255,255,255,0.08)';
   ctx.lineWidth = 1;
   for (let i = 1; i <= 3; i++){
@@ -721,7 +1160,6 @@ function drawPanel(P, dt){
     ctx.stroke();
   }
 
-  /* cone edges */
   const a0 = -Math.PI / 2 - SONAR_ARC / 2;
   const a1 = -Math.PI / 2 + SONAR_ARC / 2;
   ctx.strokeStyle = 'rgba(255,255,255,0.16)';
@@ -732,7 +1170,6 @@ function drawPanel(P, dt){
   ctx.lineTo(cx + Math.cos(a1) * maxR, cy + Math.sin(a1) * maxR);
   ctx.stroke();
 
-  /* expanding wave */
   const wavePx = (P.waveR / SONAR_RANGE) * maxR;
   const waveAlpha = 1 - P.waveR / SONAR_RANGE;
   ctx.strokeStyle = `rgba(255,255,255,${0.75 * waveAlpha})`;
@@ -741,7 +1178,6 @@ function drawPanel(P, dt){
   ctx.arc(cx, cy, wavePx, a0, a1);
   ctx.stroke();
 
-  /* hits the wave has already reached */
   const panelYaw = rover.yaw + P.dir;
   for (const h of P.hits){
     const age = P.waveR - h.dist;
@@ -753,31 +1189,146 @@ function drawPanel(P, dt){
     const sy = cy - Math.cos(rel) * r;
 
     let col;
-    if (h.type === HIT_MONSTER)      col = '255, 48, 32';   // monster  → RED
-    else if (h.type === HIT_EXIT)    col = '48, 255, 110';  // noclip   → GREEN
-    else                             col = '255,255,255';   // wall     → white
+    if (h.type === HIT_MONSTER)      col = '255, 30, 24';
+    else if (h.type === HIT_EXIT)    col = '48, 255, 110';
+    else if (h.type === HIT_SAFE)    col = h.color || '110, 255, 160';
+    else                             col = '255,255,255';
 
     const jx = sonarGlitch > 0.3 ? (Math.random() - 0.5) * sonarGlitch * 2 : 0;
     const jy = sonarGlitch > 0.3 ? (Math.random() - 0.5) * sonarGlitch * 2 : 0;
 
     ctx.fillStyle = `rgba(${col},${fade})`;
-    if (h.type === HIT_WALL){
-      ctx.fillRect(sx + jx - 1, sy + jy - 1, 2, 2);
-    } else {
-      ctx.fillRect(sx + jx - 1.5, sy + jy - 1.5, 3, 3);
-    }
+    if (h.type === HIT_WALL) ctx.fillRect(sx + jx - 1, sy + jy - 1, 2, 2);
+    else                     ctx.fillRect(sx + jx - 1.5, sy + jy - 1.5, 3, 3);
   }
 
-  /* rover marker */
   ctx.fillStyle = '#fff';
   ctx.fillRect(cx - 1, cy - 1, 2, 2);
 
   drawGlitchOn(ctx);
 }
 
-/* ── Threat proximity → glitch intensity ───────────────── */
+/* ══════════════════════════════════════════════════════════
+   SAVE STATE
+   ══════════════════════════════════════════════════════════ */
+const stats = {
+  timesCaught: savedGame?.timesCaught || 0,
+  noclipBumps: savedGame?.noclipBumps || 0,
+  safeZonesVisited: new Set(savedGame?.safeZonesVisited || [])
+};
+
+let clockMs = savedGame?.playtimeMs ?? ((savedGame?.playtime || 0) * 1000);
+let lastNow = performance.now();
+let clockRunning = false;
+
+const clockEl = document.getElementById('clock');
+
+function formatTime(ms){
+  const total = Math.max(0, Math.floor(ms));
+  const h = Math.floor(total / 3600000);
+  const m = Math.floor((total % 3600000) / 60000);
+  const s = Math.floor((total % 60000) / 1000);
+  const n = total % 1000;
+  return String(h).padStart(2, '0') + ':' +
+         String(m).padStart(2, '0') + ':' +
+         String(s).padStart(2, '0') + '.' +
+         String(n).padStart(3, '0');
+}
+
+function collectSave(){
+  return {
+    seed: WORLD_SEED,
+    rover: { x: rover.x, z: rover.z, yaw: rover.yaw },
+    monsters: monsters.map(M => ({ x: M.x, z: M.z, yaw: M.yaw, wanderTimer: M.wanderTimer })),
+    playtimeMs: clockMs,
+    timesCaught: stats.timesCaught,
+    noclipBumps: stats.noclipBumps,
+    safeZonesVisited: Array.from(stats.safeZonesVisited),
+    lightsOn: lightsOn,
+    won: won
+  };
+}
+
+function saveGame(){
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(collectSave())); }
+  catch(e){}
+}
+
+setInterval(() => {
+  if (bootDone && !won && !caughtActive) saveGame();
+}, SAVE_INTERVAL_MS);
+
+/* ══════════════════════════════════════════════════════════
+   CAUGHT — "THE END" (no jumpscare)
+   ══════════════════════════════════════════════════════════ */
+const endEl = document.getElementById('end');
+let caughtActive = false;
+let caughtTimer = 0;
+const CAUGHT_HOLD = 4.5;   // seconds before returning to play
+let graceTimer = savedGame ? GRACE_AFTER_LOAD : 0;
+
+/* Reset animations when showing end screen */
+function showEndScreen(){
+  const box = endEl.querySelector('.box');
+  /* Force reflow to restart CSS animations */
+  box.style.animation = 'none';
+  void box.offsetWidth;
+  box.style.animation = '';
+  endEl.classList.add('on');
+}
+
+function triggerCaught(){
+  if (caughtActive || graceTimer > 0) return;
+  caughtActive = true;
+  caughtTimer = 0;
+  stats.timesCaught++;
+  showEndScreen();
+  saveGame();
+}
+
+function updateCaught(dt){
+  if (graceTimer > 0) graceTimer -= dt;
+  if (!caughtActive) return;
+
+  caughtTimer += dt;
+  if (caughtTimer >= CAUGHT_HOLD){
+    caughtActive = false;
+    endEl.classList.remove('on');
+
+    /* Teleport rover to nearest safe zone */
+    let bestZone = safeZones[0];
+    let bestDist = Infinity;
+    for (const z of safeZones){
+      const d = Math.hypot(z.x - rover.x, z.z - rover.z);
+      if (d < bestDist){ bestDist = d; bestZone = z; }
+    }
+    if (bestZone){
+      rover.x = bestZone.x;
+      rover.z = bestZone.z;
+      stats.safeZonesVisited.add(bestZone.index);
+    }
+
+    /* Push monsters away */
+    for (const M of monsters){
+      const ang = Math.random() * Math.PI * 2;
+      M.x = rover.x + Math.cos(ang) * 30;
+      M.z = rover.z + Math.sin(ang) * 30;
+      M.lunge = 0;
+      M.wanderTimer = 1;
+    }
+
+    graceTimer = GRACE_AFTER_CAUGHT;
+    saveGame();
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   GLITCH / PROXIMITY
+   ══════════════════════════════════════════════════════════ */
+const vignetteEl = document.getElementById('vignette');
+let heartbeatTimer = 0;
+
 function updateGlitch(dt){
-  /* nearest monster */
   let mProx = 0;
   for (const M of monsters){
     const d = Math.hypot(M.x - rover.x, M.z - rover.z);
@@ -787,23 +1338,40 @@ function updateGlitch(dt){
     }
   }
 
-  /* noclip wall */
-  const ex = EXIT_WALL_GX * CS + CS / 2;
-  const ez = EXIT_WALL_GZ * CS + CS / 2;
-  const dW = Math.hypot(ex - rover.x, ez - rover.z);
   let wProx = 0;
-  if (dW < WALL_GLITCH_RANGE) wProx = 1 - dW / WALL_GLITCH_RANGE;
+  for (const e of exitWalls){
+    const ex = e.gx * CS + CS / 2;
+    const ez = e.gz * CS + CS / 2;
+    const dW = Math.hypot(ex - rover.x, ez - rover.z);
+    if (dW < WALL_GLITCH_RANGE){
+      const p = 1 - dW / WALL_GLITCH_RANGE;
+      if (p > wProx) wProx = p;
+    }
+  }
 
-  const target = Math.max(mProx, wProx);
+  const safe = inSafeZone(rover.x, rover.z);
+  const effProx = safe ? Math.min(mProx, 0.15) : mProx;
+
+  const target = Math.max(effProx, wProx);
   glitchAmt += (target - glitchAmt) * Math.min(1, dt * 6);
 
-  /* noclip pressure + bump flash add to it, but never invent it */
   const clip = Math.min(1, noclipT / NOCLIP_TIME);
   sonarGlitch = Math.max(glitchAmt, clip * 0.9, globalFlash * 1.2);
   if (sonarGlitch < 0.02) sonarGlitch = 0;
+
+  vignetteEl.style.opacity = (effProx * 0.9).toFixed(3);
+
+  if (!safe && effProx > 0.15){
+    heartbeatTimer -= dt;
+    if (heartbeatTimer <= 0){
+      playHeartbeat(effProx);
+      heartbeatTimer = 0.7 - effProx * 0.4;
+    }
+  } else {
+    heartbeatTimer = 0.3;
+  }
 }
 
-/* ── Apply glitch to the main 3D view ─────────────────── */
 let viewDistorted = false;
 function applyViewGlitch(){
   if (sonarGlitch > 0.02){
@@ -812,13 +1380,13 @@ function applyViewGlitch(){
     const ty = (Math.random() - 0.5) * j;
     viewEl.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(1.03)`;
     viewEl.style.filter =
-      `blur(${(1.9 + sonarGlitch * 3.2).toFixed(2)}px) ` +
+      `blur(${(0.7 + sonarGlitch * 3.0).toFixed(2)}px) ` +
       `contrast(${(1.08 + sonarGlitch * 0.55).toFixed(2)}) ` +
       `saturate(${(0.92 - sonarGlitch * 0.5).toFixed(2)})`;
     viewDistorted = true;
   } else if (viewDistorted){
     viewEl.style.transform = '';
-    viewEl.style.filter = '';
+    viewEl.style.filter = 'blur(0.7px) contrast(1.08) saturate(0.92)';
     viewDistorted = false;
   }
 }
@@ -826,6 +1394,205 @@ function applyViewGlitch(){
 function updateSonar(dt){
   updateGlitch(dt);
   drawPanel(panel, dt);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CHEAT MAP  (D + E + V)
+   ══════════════════════════════════════════════════════════ */
+const mapEl      = document.getElementById('map');
+const mapCtx     = mapEl.getContext('2d');
+const mapLabelEl = document.getElementById('mapLabel');
+const MAP_SIZE   = mapEl.width;
+const MAP_RADIUS = 26;
+const MAP_PX     = MAP_SIZE / (MAP_RADIUS * 2);
+
+let mapActive = false;
+const keysDown = new Set();
+const COMBO = ['d', 'e', 'v'];
+let cheatArmed = true;
+
+addEventListener('keydown', e => {
+  keysDown.add(e.key.toLowerCase());
+  const allDown = COMBO.every(k => keysDown.has(k));
+  if (allDown && cheatArmed){
+    mapActive = !mapActive;
+    mapEl.classList.toggle('on', mapActive);
+    mapLabelEl.classList.toggle('on', mapActive);
+    cheatArmed = false;
+    startAudio();
+  }
+});
+addEventListener('keyup', e => {
+  keysDown.delete(e.key.toLowerCase());
+  if (!COMBO.every(k => keysDown.has(k))) cheatArmed = true;
+});
+
+function drawMap(){
+  if (!mapActive) return;
+  const ctx = mapCtx;
+  const S = MAP_SIZE;
+  const rgx = Math.floor(rover.x / CS);
+  const rgz = Math.floor(rover.z / CS);
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, S, S);
+
+  for (let dz = -MAP_RADIUS; dz < MAP_RADIUS; dz++){
+    for (let dx = -MAP_RADIUS; dx < MAP_RADIUS; dx++){
+      const gx = rgx + dx;
+      const gz = rgz + dz;
+      const sx = (dx + MAP_RADIUS) * MAP_PX;
+      const sz = (dz + MAP_RADIUS) * MAP_PX;
+
+      let col;
+      if (isExitWall(gx, gz)) col = '#2aff6e';
+      else if (worldSolid(gx, gz)) col = '#6b5730';
+      else col = '#0d0c08';
+
+      let safeHere = false;
+      for (const zone of safeZones){
+        const ddx = (gx * CS + CS/2) - zone.x;
+        const ddz = (gz * CS + CS/2) - zone.z;
+        if (ddx*ddx + ddz*ddz < SAFE_RADIUS * SAFE_RADIUS){
+          safeHere = true; break;
+        }
+      }
+      if (safeHere && !worldSolid(gx, gz)) col = '#172e1e';
+
+      ctx.fillStyle = col;
+      ctx.fillRect(sx, sz, MAP_PX + 0.6, MAP_PX + 0.6);
+    }
+  }
+
+  for (const zone of safeZones){
+    const dx = (zone.x / CS) - rgx;
+    const dz = (zone.z / CS) - rgz;
+    if (Math.abs(dx) > MAP_RADIUS || Math.abs(dz) > MAP_RADIUS) continue;
+    const sx = (dx + MAP_RADIUS) * MAP_PX;
+    const sz = (dz + MAP_RADIUS) * MAP_PX;
+    ctx.strokeStyle = zone.palette.css;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sx, sz, (SAFE_RADIUS / CS) * MAP_PX, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  for (const M of monsters){
+    const dx = (M.x / CS) - rgx;
+    const dz = (M.z / CS) - rgz;
+    if (Math.abs(dx) > MAP_RADIUS || Math.abs(dz) > MAP_RADIUS) continue;
+    const sx = (dx + MAP_RADIUS) * MAP_PX;
+    const sz = (dz + MAP_RADIUS) * MAP_PX;
+    ctx.fillStyle = '#ff3020';
+    ctx.fillRect(sx - 3, sz - 3, 6, 6);
+    ctx.fillStyle = 'rgba(255,48,32,0.4)';
+    ctx.fillRect(sx - 6, sz - 6, 12, 12);
+  }
+
+  const cx = MAP_RADIUS * MAP_PX;
+  const cz = MAP_RADIUS * MAP_PX;
+  const dirX = -Math.sin(rover.yaw);
+  const dirZ = -Math.cos(rover.yaw);
+
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cz);
+  ctx.lineTo(cx + dirX * 22, cz + dirZ * 22);
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(cx - 3, cz - 3, 6, 6);
+
+  ctx.strokeStyle = 'rgba(110,255,160,0.12)';
+  ctx.lineWidth = 1;
+  for (let i = -MAP_RADIUS; i <= MAP_RADIUS; i += 5){
+    const p = (i + MAP_RADIUS) * MAP_PX;
+    ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, S); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(S, p); ctx.stroke();
+  }
+
+  ctx.strokeStyle = 'rgba(110,255,160,0.5)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, S - 2, S - 2);
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUDIO
+   ══════════════════════════════════════════════════════════ */
+let actx = null, droneGain = null;
+function startAudio(){
+  if (actx) return;
+  try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return; }
+  const master = actx.createGain();
+  master.gain.value = 0.4;
+  master.connect(actx.destination);
+
+  droneGain = actx.createGain();
+  droneGain.gain.value = 0.10;
+  droneGain.connect(master);
+
+  [42, 63, 126].forEach((f, i) => {
+    const o = actx.createOscillator();
+    o.type = i < 2 ? 'sawtooth' : 'sine';
+    o.frequency.value = f;
+    const g = actx.createGain();
+    g.gain.value = i === 2 ? 0.12 : 0.30;
+    const lp = actx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 240;
+    o.connect(g); g.connect(lp); lp.connect(droneGain);
+    o.start();
+  });
+}
+
+function playHeartbeat(vol){
+  if (!actx) return;
+  const t0 = actx.currentTime;
+  const osc = actx.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(65, t0);
+  osc.frequency.exponentialRampToValueAtTime(30, t0 + 0.16);
+  const g = actx.createGain();
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(0.35 * vol, t0 + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+  osc.connect(g); g.connect(actx.destination);
+  osc.start(t0); osc.stop(t0 + 0.28);
+}
+
+/* Low soft "you were taken" tone when caught */
+function playCaughtTone(){
+  if (!actx) return;
+  const t0 = actx.currentTime;
+  const osc = actx.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(220, t0);
+  osc.frequency.exponentialRampToValueAtTime(55, t0 + 2.4);
+  const g = actx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.linearRampToValueAtTime(0.22, t0 + 0.3);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 2.6);
+  osc.connect(g); g.connect(actx.destination);
+  osc.start(t0); osc.stop(t0 + 2.7);
+}
+
+/* Rising chime when winning */
+function playWinTone(){
+  if (!actx) return;
+  const t0 = actx.currentTime;
+  [261.63, 329.63, 392.00, 523.25].forEach((f, i) => {
+    const o = actx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    const g = actx.createGain();
+    const start = t0 + i * 0.22;
+    g.gain.setValueAtTime(0, start);
+    g.gain.linearRampToValueAtTime(0.20, start + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + 1.6);
+    o.connect(g); g.connect(actx.destination);
+    o.start(start); o.stop(start + 1.7);
+  });
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -838,24 +1605,25 @@ const bootPct   = document.getElementById('bootPct');
 const bootEnter = document.getElementById('bootEnter');
 
 const BOOT_LINES = [
-  { at: 0,   text: '> ROVER OS v0.4.2' },
+  { at: 0,   text: '> ROVER OS v0.8.0' },
   { at: 3,   text: '> LEVEL 0 SURVEY UNIT' },
   { at: 6,   text: '' },
   { at: 9,   text: 'BIOS .................... OK' },
   { at: 16,  text: 'MEMORY .................. OK' },
   { at: 23,  text: 'SENSOR ARRAY ............ OK' },
   { at: 30,  text: 'CAMERA FEED ............. OK' },
-  { at: 37,  text: 'SONAR ARRAY (REAR) ...... OK' },
+  { at: 37,  text: 'REAR SONAR .............. OK' },
   { at: 43,  text: 'LIGHT MODULE ............ OK' },
   { at: 50,  text: 'MOTOR DRIVERS ........... OK' },
   { at: 57,  text: 'GYRO .................... OK' },
   { at: 63,  text: 'POWER CELL .............. 84%' },
   { at: 67,  text: '' },
   { at: 70,  text: 'SCANNING SURROUNDINGS...' },
-  { at: 76,  text: 'WALL ANOMALY DETECTED' },
-  { at: 82,  text: 'GRID OFFSET: UNKNOWN' },
-  { at: 89,  text: 'MONSTER SIGNATURES: 10' },
-  { at: 95,  text: '' },
+  { at: 76,  text: 'MULTIPLE WALL ANOMALIES' },
+  { at: 80,  text: 'SAFE BEACONS ONLINE' },
+  { at: 84,  text: 'BEACON COLORS: VARIABLE' },
+  { at: 88,  text: 'MONSTER SIGNATURES: 12' },
+  { at: 93,  text: savedGame ? 'AUTOSAVE FOUND // RESUMING' : 'NO SAVE // NEW SURVEY' },
   { at: 98,  text: '> READY.' },
 ];
 
@@ -890,6 +1658,9 @@ function enterGame(){
   if (!bootDone || bootEl.classList.contains('hidden')) return;
   bootEl.classList.add('hidden');
   startAudio();
+  saveGame();
+  clockRunning = true;
+  lastNow = performance.now();
 }
 bootEnter.addEventListener('click', enterGame);
 addEventListener('keydown', e => {
@@ -897,50 +1668,37 @@ addEventListener('keydown', e => {
 });
 
 /* ══════════════════════════════════════════════════════════
-   AUDIO
-   ══════════════════════════════════════════════════════════ */
-let actx = null, droneGain = null;
-function startAudio(){
-  if (actx) return;
-  try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return; }
-  const master = actx.createGain();
-  master.gain.value = 0.4;
-  master.connect(actx.destination);
-  droneGain = actx.createGain();
-  droneGain.gain.value = 0.10;
-  droneGain.connect(master);
-  [42, 63, 126].forEach((f, i) => {
-    const o = actx.createOscillator();
-    o.type = i < 2 ? 'sawtooth' : 'sine';
-    o.frequency.value = f;
-    const g = actx.createGain();
-    g.gain.value = i === 2 ? 0.12 : 0.30;
-    const lp = actx.createBiquadFilter();
-    lp.type = 'lowpass';
-    lp.frequency.value = 240;
-    o.connect(g); g.connect(lp); lp.connect(droneGain);
-    o.start();
-  });
-}
-
-/* ══════════════════════════════════════════════════════════
    NOCLIP / WIN
    ══════════════════════════════════════════════════════════ */
 let noclipT = 0;
-let won = false;
+let won = savedGame?.won || false;
 const winEl = document.getElementById('win');
-document.getElementById('again').addEventListener('click', () => location.reload());
+
+document.getElementById('again').addEventListener('click', () => {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e){}
+  location.reload();
+});
+document.getElementById('endAgain').addEventListener('click', () => {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e){}
+  location.reload();
+});
+
+if (won) winEl.classList.add('on');
+
 function triggerWin(){
   if (won) return;
   won = true;
+  clockRunning = false;
   winEl.classList.add('on');
+  playWinTone();
+  saveGame();
 }
 
 /* ══════════════════════════════════════════════════════════
    BUTTON INPUT
    ══════════════════════════════════════════════════════════ */
 const input = { forward: false, back: false, left: false, right: false };
-let lightsOn = true;
+let lightsOn = savedGame?.lightsOn ?? true;
 
 function bindHold(id, key){
   const el = document.getElementById(id);
@@ -960,13 +1718,39 @@ bindHold('bB', 'back');
 bindHold('bL', 'left');
 bindHold('bR', 'right');
 
-document.getElementById('bLight').addEventListener('click', () => {
+const bLightEl = document.getElementById('bLight');
+bLightEl.textContent = lightsOn ? 'LIGHT' : 'DARK';
+frontLight.visible = lightsOn;
+backLight.visible = lightsOn;
+
+bLightEl.addEventListener('click', () => {
   lightsOn = !lightsOn;
   frontLight.visible = lightsOn;
   backLight.visible = lightsOn;
-  document.getElementById('bLight').textContent = lightsOn ? 'LIGHT' : 'DARK';
+  bLightEl.textContent = lightsOn ? 'LIGHT' : 'DARK';
+  saveGame();
   startAudio();
 });
+
+/* ══════════════════════════════════════════════════════════
+   RESTORE SAVED STATE
+   ══════════════════════════════════════════════════════════ */
+if (savedGame){
+  if (savedGame.rover){
+    rover.x = savedGame.rover.x;
+    rover.z = savedGame.rover.z;
+    rover.yaw = savedGame.rover.yaw;
+  }
+  if (Array.isArray(savedGame.monsters) && savedGame.monsters.length === monsters.length){
+    for (let i = 0; i < monsters.length; i++){
+      const s = savedGame.monsters[i];
+      if (typeof s.x === 'number') monsters[i].x = s.x;
+      if (typeof s.z === 'number') monsters[i].z = s.z;
+      if (typeof s.yaw === 'number') monsters[i].yaw = s.yaw;
+      if (typeof s.wanderTimer === 'number') monsters[i].wanderTimer = s.wanderTimer;
+    }
+  }
+}
 
 /* ══════════════════════════════════════════════════════════
    MAIN LOOP
@@ -980,11 +1764,30 @@ function tick(){
   requestAnimationFrame(tick);
   const dt = Math.min(clock.getDelta(), 0.05);
 
-  if (won){
+  /* Clock */
+  const now = performance.now();
+  if (clockRunning && bootDone && !won && !caughtActive){
+    clockMs += Math.min(now - lastNow, 100);
+  }
+  lastNow = now;
+  clockEl.textContent = formatTime(clockMs);
+
+  updateCaught(dt);
+
+  if (won || caughtActive){
+    updateDust(dt);
     updateGlitch(dt);
     applyViewGlitch();
+    /* Keep safe zones pulsing even when caught/won */
+    const pulse = performance.now() * 0.002;
+    for (const zone of safeZones){
+      if (zone.light) zone.light.intensity = 8.0 + Math.sin(pulse + zone.index) * 1.6;
+      if (zone.halo) zone.halo.material.opacity = 0.12 + Math.sin(pulse * 0.8 + zone.index) * 0.05;
+      if (zone.core) zone.core.scale.setScalar(1 + Math.sin(pulse * 2 + zone.index) * 0.10);
+    }
     renderer.render(scene, cam);
     updateSonar(dt);
+    drawMap();
     return;
   }
 
@@ -1009,6 +1812,7 @@ function tick(){
     const gx = Math.floor(checkX / CS);
     const gz = Math.floor(checkZ / CS);
     if (isExitWall(gx, gz)){
+      if (noclipT === 0) stats.noclipBumps++;
       noclipT += dt;
       if (noclipT > NOCLIP_TIME) triggerWin();
     } else {
@@ -1018,9 +1822,17 @@ function tick(){
     noclipT = Math.max(0, noclipT - dt * 2);
   }
 
-  /* Fixed forward-facing camera */
+  /* Camera */
   cam.position.set(rover.x, EYE_Y, rover.z);
   cam.rotation.set(-0.06, rover.yaw, 0, 'YXZ');
+
+  if (Math.random() < dt * 11){
+    flickTarget = 5.4 + Math.random() * 1.4;
+  }
+  if (lightsOn){
+    frontLight.intensity += (flickTarget - frontLight.intensity) * Math.min(1, dt * 12);
+    backLight.intensity  += (flickTarget * 0.6 - backLight.intensity) * Math.min(1, dt * 12);
+  }
 
   frontLight.position.set(rover.x, EYE_Y, rover.z);
   frontTarget.position.set(rover.x + fX * 8, EYE_Y - 0.2, rover.z + fZ * 8);
@@ -1028,8 +1840,32 @@ function tick(){
   backTarget.position.set(rover.x - fX * 6, EYE_Y - 0.2, rover.z - fZ * 6);
 
   updateMonsters(dt);
+  updateDust(dt);
 
-  /* glitch is now purely a proximity readout */
+  const pulse = performance.now() * 0.002;
+  for (const zone of safeZones){
+    if (zone.light) zone.light.intensity = 8.0 + Math.sin(pulse + zone.index) * 1.6;
+    if (zone.halo) zone.halo.material.opacity = 0.12 + Math.sin(pulse * 0.8 + zone.index) * 0.05;
+    if (zone.core) zone.core.scale.setScalar(1 + Math.sin(pulse * 2 + zone.index) * 0.10);
+  }
+
+  const inZone = inSafeZone(rover.x, rover.z);
+  if (inZone && !stats.safeZonesVisited.has(inZone.index)){
+    stats.safeZonesVisited.add(inZone.index);
+    saveGame();
+  }
+
+  if (!caughtActive && !inZone && graceTimer <= 0){
+    for (const M of monsters){
+      const d = Math.hypot(M.x - rover.x, M.z - rover.z);
+      if (d < CAUGHT_DIST){
+        triggerCaught();
+        playCaughtTone();
+        break;
+      }
+    }
+  }
+
   updateGlitch(dt);
   applyViewGlitch();
 
@@ -1042,6 +1878,7 @@ function tick(){
   streamChunks();
   renderer.render(scene, cam);
   updateSonar(dt);
+  drawMap();
 }
 
 tick();
